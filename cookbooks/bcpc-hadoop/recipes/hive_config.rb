@@ -131,7 +131,7 @@ elsif hive_site_vars[:hs2_auth] == 'LDAP'
   }
 end
 
-generated_values.merge!(hs2_auth_values)
+generated_values.merge!(hs2_auth_values) unless hs2_auth_values.nil?
 
 if hive_site_vars[:kerberos_enabled]
   kerberos_values =
@@ -150,7 +150,7 @@ if hive_site_vars[:kerberos_enabled]
      'hive.server2.authentication.kerberos.principal' =>
        hive_site_vars[:server_princ]
     }
-  generated_values.merge!(kerberos_values)
+  generated_values.merge!(kerberos_values) unless kerberos_values.nil?
 end
 
 site_xml = node[:bcpc][:hadoop][:hive][:site_xml]

@@ -1,5 +1,5 @@
 # Kerberos settings 
-default[:bcpc][:hadoop][:kerberos][:enable] = true
+default[:bcpc][:hadoop][:kerberos][:enable] = false
 default[:bcpc][:hadoop][:kerberos][:realm] = "BCPC.EXAMPLE.COM"
 default[:bcpc][:hadoop][:kerberos][:data] = {
         :namenode => {"principal" => "nn", "keytab" => "nn.service.keytab", "owner" => "hdfs", "princhost" => "_HOST", "perms"=> "0600", "spnego_keytab" => "nn.service.keytab"},

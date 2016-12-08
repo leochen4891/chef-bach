@@ -20,11 +20,11 @@ if [[ "$(pwd)" != "$(git rev-parse --show-toplevel)" ]]; then
 fi
 
 ENVIRONMENT=Test-Laptop
-#PROXY=proxy.example.com:80
-DNS_SERVERS='"8.8.8.8", "8.8.4.4"'
-export BOOTSTRAP_VM_MEM=3096
-export BOOTSTRAP_VM_CPUs=2
-export CLUSTER_VM_MEM=5120
+PROXY=devproxy.bloomberg.com:82
+DNS_SERVERS='"10.10.10.10", "10.10.10.11"'
+export BOOTSTRAP_VM_MEM=8192
+export BOOTSTRAP_VM_CPUs=4
+export CLUSTER_VM_MEM=8192
 export CLUSTER_VM_CPUs=4
 
 printf "#### Setup configuration files\n"
@@ -50,8 +50,13 @@ source ./vbox_create.sh
 
 download_VM_files || ( echo "############## VBOX CREATE DOWNLOAD VM FILES RETURNED $? ##############" && exit 1 )
 create_bootstrap_VM || ( echo "############## VBOX CREATE BOOTSTRAP VM RETURNED $? ##############" && exit 1 )
+
+VBoxManage snapshot bcpc-bootstrap take shoe-less
+
 create_cluster_VMs || ( echo "############## VBOX CREATE CLUSTER VMs RETURNED $? ##############" && exit 1 )
 install_cluster || ( echo "############## VBOX CREATE INSTALL CLUSTER RETURNED $? ##############" && exit 1 )
+
+VBoxManage snapshot bcpc-bootstrap take pre-node-objects
 
 printf "#### Cobbler Boot\n"
 printf "Snapshotting pre-Cobbler and booting (unless already running)\n"
@@ -98,3 +103,4 @@ printf "Snapshotting post-Cobbler\n"
 VBoxManage snapshot bcpc-vm1 take Full-Shoes
 VBoxManage snapshot bcpc-vm2 take Full-Shoes
 VBoxManage snapshot bcpc-vm3 take Full-Shoes
+VBoxManage snapshot bcpc-bootstrap take full-shoes

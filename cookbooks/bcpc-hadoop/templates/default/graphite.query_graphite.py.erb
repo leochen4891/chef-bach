@@ -79,6 +79,14 @@ class GraphiteToZabbix(object):
     The format should match the item names in Zabbix.
     """
 
+    # FIXME: the current get_zbx_keys doesn't support nested fucntions
+    #   use string contain as a temporary solution.
+
+    if 'divideSeries' in target and 'NumDeadDataNodes' in target:
+      return ('namenode', 'namenode.DeadNodesRatio')
+    elif 'diffSeries' in target and 'NumDeadDataNodes' in target:
+      return ('namenode', 'namenode.DeadNodesMismatch')
+
     query = self.fetch_query_from_function(target)
     parts = query.split('.')
     host = parts[1]

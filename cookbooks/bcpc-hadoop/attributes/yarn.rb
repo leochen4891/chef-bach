@@ -133,6 +133,8 @@ default[:bcpc][:hadoop][:yarn][:site_xml].tap do |site_xml|
   site_xml['yarn.scheduler.maximum-allocation-mb'] = yarn_max_memory.call
 
   site_xml['yarn.timeline-service.client.max-retries'] = 0
+
+  site_xml['yarn.nodemanager.disk-health-checker.min-free-space-per-disk-mb'] = 20480 # 20GB
 end
 
 ### Delete these. (start) ###

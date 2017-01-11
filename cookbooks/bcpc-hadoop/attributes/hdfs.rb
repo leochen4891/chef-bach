@@ -15,7 +15,7 @@ default[:bcpc][:hadoop][:hdfs][:dfs].tap do |dfs|
   dfs[:namenode][:avoid][:read][:stale][:datanode] = true
   dfs[:namenode][:avoid][:write][:stale][:datanode] = true
   dfs[:hosts][:exclude] = "/etc/hadoop/conf/dfs.exclude"
-  dfs[:datanode][:du][:reserved] = 1073741824
+  dfs[:datanode][:du][:reserved] = 42949672960 # 40GB
   dfs[:permissions][:superusergroup] = "hdfs"
   dfs[:cluster][:administrators] = "hdfs"
   dfs[:dfs][:ha]['automatic-failover'][:enabled] = true

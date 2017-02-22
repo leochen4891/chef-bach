@@ -18,7 +18,7 @@ if [[ -z "$CURL" ]]; then
 fi
 
 # Bootstrap VM Defaults (these need to be exported for Vagrant's Vagrantfile)
-export BOOTSTRAP_VM_MEM=${BOOTSTRAP_VM_MEM-2048}
+export BOOTSTRAP_VM_MEM=${BOOTSTRAP_VM_MEM-16384}
 export BOOTSTRAP_VM_CPUs=${BOOTSTRAP_VM_CPUs-1}
 # Use this if you intend to make an apt-mirror in this VM (see the
 # instructions on using an apt-mirror towards the end of bootstrap.md)
@@ -30,7 +30,7 @@ export BOOTSTRAP_VM_CPUs=${BOOTSTRAP_VM_CPUs-1}
 export CLUSTER_TYPE=${CLUSTER_TYPE:-Hadoop}
 
 # Cluster VM Defaults
-export CLUSTER_VM_MEM=${CLUSTER_VM_MEM-2048}
+export CLUSTER_VM_MEM=${CLUSTER_VM_MEM-16384}
 export CLUSTER_VM_CPUs=${CLUSTER_VM_CPUs-1}
 export CLUSTER_VM_EFI=${CLUSTER_VM_EFI:-true}
 export CLUSTER_VM_DRIVE_SIZE=${CLUSTER_VM_DRIVE_SIZE-20480}

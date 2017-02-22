@@ -1,6 +1,10 @@
 # vim: tabstop=2:shiftwidth=2:softtabstop=2:expandtabs
 subnet = node[:bcpc][:management][:subnet]
 
+# temp fix for empty ipc.datanode.ipc.address
+node[:bcpc][:hadoop][:hdfs][:site_xml]['dfs.datanode.ipc.address'] = 
+    node[:bcpc][:floating][:ip].to_s + ':50020'
+
 hdfs_site_values = node[:bcpc][:hadoop][:hdfs][:site_xml]
 
 ruby_block "hdfs_site_generated_values_common" do

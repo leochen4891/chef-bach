@@ -2,7 +2,7 @@
 subnet = node[:bcpc][:management][:subnet]
 
 # temp fix for empty ipc.datanode.ipc.address
-node[:bcpc][:hadoop][:hdfs][:site_xml]['dfs.datanode.ipc.address'] = 
+node.default[:bcpc][:hadoop][:hdfs][:site_xml]['dfs.datanode.ipc.address'] =
     node[:bcpc][:floating][:ip].to_s + ':50020'
 
 hdfs_site_values = node[:bcpc][:hadoop][:hdfs][:site_xml]

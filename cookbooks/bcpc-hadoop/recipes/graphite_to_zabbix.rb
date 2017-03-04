@@ -1,7 +1,7 @@
-include_recipe "bcpc-hadoop::graphite_queries"
+include_recipe 'bcpc-hadoop::graphite_queries'
 
 template node['bcpc']['zabbix']['scripts']['sender'] do
-  source "zabbix.run_zabbix_sender.sh.erb"
+  source 'zabbix.run_zabbix_sender.sh.erb'
   owner 'zabbix'
   mode 0550
 end
@@ -12,14 +12,14 @@ directory ::File.dirname(node['bcpc']['zabbix']['scripts']['mail']) do
 end
 
 template node['bcpc']['zabbix']['scripts']['mail'] do
-  source node["bcpc"]["hadoop"]["zabbix"]["mail_source"]
-  cookbook node["bcpc"]["hadoop"]["zabbix"]["cookbook"] if
-    node["bcpc"]["hadoop"]["zabbix"]["cookbook"]
+  source node['bcpc']['hadoop']['zabbix']['mail_source']
+  cookbook node['bcpc']['hadoop']['zabbix']['cookbook'] if
+    node['bcpc']['hadoop']['zabbix']['cookbook']
   mode 0755
 end
 
 template node['bcpc']['zabbix']['scripts']['query_graphite'] do
-  source "graphite.query_graphite.py.erb"
+  source 'graphite.query_graphite.py.erb'
   variables(:log_file => node[:bcpc][:hadoop][:zabbix][:query_graphite][:log_file],
             :config_file => node[:bcpc][:hadoop][:zabbix][:query_graphite][:config_file],
             :log_level => node[:bcpc][:hadoop][:zabbix][:query_graphite][:logging_level],
@@ -30,22 +30,26 @@ template node['bcpc']['zabbix']['scripts']['query_graphite'] do
             :worker_count => node[:bcpc][:hadoop][:graphite][:worker_count]
            )
   mode 0744
-  owner "root"
-  group "root"
+  owner 'root'
+  group 'root'
 end
 
 template node[:bcpc][:hadoop][:zabbix][:query_graphite][:config_file] do
-  source "graphite.query_graphite.config.erb"
+  source 'graphite.query_graphite.config.erb'
   mode 0544
-  zabbix_triggers = node.run_state["zabbix_triggers"] or {}
-  variables(:queries => zabbix_triggers.map{ 
-    |host,item| item.select{|key, attr| !attr.key?('is_graphite_query') || attr['is_graphite_query'] }.map{ 
-      |key, attr| attr['query'] + " " + (attr['query_range'] ? attr['query_range'] : node[:bcpc][:hadoop][:graphite][:default_query_range])}
+  zabbix_triggers = node.run_state['zabbix_triggers'] or {}
+  variables(:queries => zabbix_triggers.map{
+    |host,item| item.select{|key, attr| !attr.key?('is_graphite_query') || attr['is_graphite_query'] }.map{
+      |key, attr| attr['query'] + ' ' + (attr['query_range'] ? attr['query_range'] : node[:bcpc][:hadoop][:graphite][:default_query_range])}
   }.flatten(1).to_set
   )
 end
 
-ruby_block "zabbix_monitor" do
+default_item = node['bcpc']['zabbix']['item']
+default_trigger = node['bcpc']['zabbix']['trigger']
+default_action = node['bcpc']['zabbix']['action']
+
+ruby_block 'zabbix_monitor' do
   block do
     require 'zabbixapi'
 
@@ -57,21 +61,21 @@ ruby_block "zabbix_monitor" do
       :password => "#{get_config!('password','zabbix-admin','os')}"
     )
     if zbx.nil?
-      Chef::Log.error("Could not connect to Zabbix server")
-      raise "Could not connect to Zabbix server"
+      Chef::Log.error('Could not connect to Zabbix server')
+      raise 'Could not connect to Zabbix server'
     end
 
     # Fetch graphite hosts
     graphite_hosts = get_node_attributes(
-      MGMT_IP_ATTR_SRCH_KEYS, "graphite", "bcpc"
-    ).map { |v| v['mgmt_ip'] }.join(",")
+      MGMT_IP_ATTR_SRCH_KEYS, 'graphite', 'bcpc'
+    ).map { |v| v['mgmt_ip'] }.join(',')
 
     if graphite_hosts.empty?
-      Chef::Log.error("No graphite hosts found")
-      raise "No graphite hosts found"
+      Chef::Log.error('No graphite hosts found')
+      raise 'No graphite hosts found'
     end
 
-    trapper_hosts = graphite_hosts + "," + node[:bcpc][:management][:vip]
+    trapper_hosts = graphite_hosts + ',' + node[:bcpc][:management][:vip]
 
     #cron_check_cond = Array.new
 
@@ -83,27 +87,27 @@ ruby_block "zabbix_monitor" do
       # Permission Guests usergroup to read hostgroup_id
       guests_ugroup_id = zbx.usergroups.get_id(:name => 'Guests')
       if guests_ugroup_id.nil?
-        Chef::Log.info("Could not find 'Guests' user group in zabbix")
+        Chef::Log.info('Could not find 'Guests' user group in zabbix')
       else
         ret = zbx.usergroups.set_perms(
-                :usrgrpid => guests_ugroup_id, :hostgroupids => [hostgroup_id], 
+                :usrgrpid => guests_ugroup_id, :hostgroupids => [hostgroup_id],
                 :permission => 2)
         if ret.nil?
           Chef::Log.info("Failed to permission 'Guests' to read #{node.chef_environment}")
         end
-      end   
+      end
     end #if hostgroup_id.nil?
 
     # Get existing actions
     actions = zbx.query(
       method: 'action.get',
-      params: { "output" => ["actionid", "name"] }
+      params: { 'output' => ['actionid', 'name'] }
     )
     existing_actions = actions.inject({}) {
-      |result, element| result.merge({element["name"] => element["actionid"]})
+      |result, element| result.merge({element['name'] => element['actionid']})
     }
 
-    zabbix_triggers = node.run_state["zabbix_triggers"] or {}
+    zabbix_triggers = node.run_state['zabbix_triggers'] or {}
     zabbix_triggers.each do |trigger_host, queries|
       # Create host entries in Zabbix.
       # Note: these are dummy entries to define the required items and triggers
@@ -123,15 +127,15 @@ ruby_block "zabbix_monitor" do
       # FIXME:
       # Following zbx.applications.create only adds the first host to the
       # application. The items that are created latest are not added to the
-      # application. To add them one has to specify "attributes =>
-      # [ "<zabbix id for hadoop application>" ]" to zbx.items.create_or_update
+      # application. To add them one has to specify 'attributes =>
+      # [ '<zabbix id for hadoop application>' ]' to zbx.items.create_or_update
       # call but when tried it failed complaining that application hadoop is not
       # available on the host. This is for all the hosts other than the first
       # one which was passed in while creating the application.
-      app_id = zbx.applications.get_id(:name => "hadoop")
+      app_id = zbx.applications.get_id(:name => 'hadoop')
       if app_id.nil?
         app_id = zbx.applications.create(
-          :name => "hadoop",
+          :name => 'hadoop',
           :hostid => "#{host_id}"
         )
       end
@@ -139,11 +143,11 @@ ruby_block "zabbix_monitor" do
       # Get existing items for the host
       items = zbx.query(
         method: 'item.get',
-        params: { "output" => ["itemid", "name"], "hostids" => host_id }
+        params: { 'output' => ['itemid', 'name'], 'hostids' => host_id }
       )
       existing_items = items.inject({}) {
         |result, element| result.merge(
-          { element["name"] => element["itemid"] }
+          { element['name'] => element['itemid'] }
         )
       }
       createItemsArr = []
@@ -153,13 +157,13 @@ ruby_block "zabbix_monitor" do
       triggers = zbx.query(
         method: 'trigger.get',
         params: {
-          "output" => ["triggerid", "description"],
-          "hostids" => host_id
+          'output' => ['triggerid', 'description'],
+          'hostids' => host_id
         }
       )
       existing_triggers = triggers.inject({}) {
         |result, element| result.merge(
-          { element["description"] => element["triggerid"] }
+          { element['description'] => element['triggerid'] }
         )
       }
       createTriggersArr = []
@@ -188,10 +192,14 @@ ruby_block "zabbix_monitor" do
         end
 
         item_info = {
-          :name => trigger_key, :description => trigger_key,
-          :key_ => trigger_key, :type => 2, :value_type => value_type,
-          :data_type => 0, :hostid => "#{host_id}", 
-          :trapper_hosts => trapper_hosts, :status => status
+          :name => trigger_key,
+          :description => trigger_key,
+          :key_ => trigger_key,
+          :type => default_item['type'],
+          :value_type => value_type,
+          :hostid => "#{host_id}",
+          :trapper_hosts => trapper_hosts,
+          :status => status
         }
 
         if (item_id = existing_items[trigger_key]).nil?
@@ -218,8 +226,8 @@ ruby_block "zabbix_monitor" do
         end
 
         trigger_name = attrs['trigger_name']
-        expr = "{" + "#{trigger_host}" + ":" + trigger_key + "." +
-          "#{attrs['trigger_val']}" + "}" + "#{attrs['trigger_cond']}"
+        expr = '{' + "#{trigger_host}" + ':' + trigger_key + '.' +
+          "#{attrs['trigger_val']}" + '}' + "#{attrs['trigger_cond']}"
 
         trigger_info = {
           :description => trigger_name,
@@ -234,47 +242,55 @@ ruby_block "zabbix_monitor" do
 
           # For all triggers, a companion trigger is created to check whether
           # the zabbix sender cron job is active and sends data to Zabbix.
-          #cron_check_cond << "{" + "#{trigger_host}" + ":" + trigger_key +
-          #  ".nodata(#{node["bcpc"]["hadoop"]["zabbix"]["cron_check_time"]})}=1"
+          #cron_check_cond << '{' + "#{trigger_host}" + ':' + trigger_key +
+          #  ".nodata(#{node['bcpc']['hadoop']['zabbix']['cron_check_time']})}=1"
         else
           trigger_info[:triggerid] = trigger_id
           updateTriggersArr.push(trigger_info)
-        end # End of "if (trigger_id = existing_triggers[trigger_name]).nil?"
+        end # End of 'if (trigger_id = existing_triggers[trigger_name]).nil?'
 
         # Create/Update Actions
         action_status = node[:bcpc][:hadoop][:zabbix][:enable_alarming] ? status : 1
         esc_period = attrs['esc_period'].nil? ? node[:bcpc][:hadoop][:zabbix][:escalation_period] : attrs['esc_period']
 
         action_info = {
-          'status' => action_status, 'esc_period' => esc_period,
-          'filter'=> {  
-            'evaltype' => 1,
+          'status' => action_status,
+          'esc_period' => esc_period,
+          'filter'=> {
+            'evaltype' => default_action['filter']['evaltype'],
             'conditions' => [
-              {"conditiontype" => 3,"operator" => 2,"value" => trigger_name},
-              {"conditiontype" => 5,"operator" => 0,"value" => 1},
-              {"conditiontype" => 16,"operator" => 7, "value" => ''}
+              {
+                'conditiontype' => default_action['filter']['conditions']['conditiontype'],
+                'operator' => default_action['filter']['conditions']['operator'],
+                'value' => trigger_name
+              },
+              node.default['bcpc']['zabbix']['action']['filter']['conditions']['trigger_problem'],
+              node.default['bcpc']['zabbix']['action']['filter']['conditions']['maintenance_off']
             ]
           },
           'operations' => [{
-            "operationtype" => 1, "esc_step_from" => 2, "esc_step_to" => 2,
-            "opcommand" => {
-              "command" => "#{node['bcpc']['zabbix']['scripts']['mail']}" +
+            'operationtype' => default_action['operations']['operationtype'],
+            'esc_step_from' => default_action['operations']['esc_step_from'],
+            'esc_step_to' => default_action['operations']['esc_step_to'],
+            'opcommand' => {
+              'command' => "#{node['bcpc']['zabbix']['scripts']['mail']}" +
                 " {TRIGGER.NAME} #{node.chef_environment}" +
                 " #{attrs['severity']} '#{attrs['trigger_desc']}'" +
                 " #{trigger_host} #{attrs['route_to']}",
-              "type" => "0", "execute_on" => "1"
+              'type' => default_action['operations']['opcommand']['type'],
+              'execute_on' => default_action['operations']['opcommand']['type']
             },
-            "opcommand_hst" => ["hostid" => 0]
+            'opcommand_hst' => ['hostid' => default_action['operations']['opcommand_host']['hostid']]
           }]
         }
         if (action_id = existing_actions["#{trigger_name}_action"]).nil?
           action_info[:name] = "#{trigger_name}_action"
-          action_info[:eventsource] = 0  
+          action_info[:eventsource] = 0
           createActionsArr.push(action_info)
         else
           action_info[:actionid] = action_id
           updateActionsArr.push(action_info)
-        end # "if (action_id = existing_actions["#{trigger_name}_action"]).nil?"
+        end # 'if (action_id = existing_actions["#{trigger_name}_action"]).nil?'
       end #queries.each
 
       zbx.query(method: 'item.create', params: createItemsArr) if not createItemsArr.empty?
@@ -284,30 +300,30 @@ ruby_block "zabbix_monitor" do
       zbx.query(method: 'action.create', params: createActionsArr) if not createActionsArr.empty?
       zbx.query(method: 'action.update', params: updateActionsArr) if not updateActionsArr.empty?
 
-    end #node["bcpc"]["hadoop"]["graphite"]["queries"].each
+    end #node['bcpc']['hadoop']['graphite']['queries'].each
 
     # Create a dummy trigger using all the items defined during the first run
     # of this recipe to perform cron status check
     # Change reverted back due to issue
     # https://www.zabbix.com/forum/showthread.php?t=46276
     #
-    #if zbx.triggers.get_id(:description => "cron_check").nil?
-    #  Chef::Log.debug "Trigger cron_check not defined"
-    #  cron_check_expr = cron_check_cond.join("&")
+    #if zbx.triggers.get_id(:description => 'cron_check').nil?
+    #  Chef::Log.debug 'Trigger cron_check not defined'
+    #  cron_check_expr = cron_check_cond.join('&')
     #  zbx.triggers.create(
-    #    :description => "cron_check", :expression => cron_check_expr,
-    #    :comments => "Cron down", :priority => 4, :status => 0
+    #    :description => 'cron_check', :expression => cron_check_expr,
+    #    :comments => 'Cron down', :priority => 4, :status => 0
     #  )
     #else
-    #  Chef::Log.debug "Trigger cron_check already defined"
+    #  Chef::Log.debug 'Trigger cron_check already defined'
     #end
   end
   only_if { is_zabbix_leader?(node[:hostname]) }
 end
 
-cron "Run script to query graphite and send data to zabbix" do
+cron 'Run script to query graphite and send data to zabbix' do
   minute '*'
   hour   '*'
   user   'zabbix'
-  command  "pgrep -u zabbix 'zabbix_sender' > /dev/null || /usr/local/bin/run_zabbix_sender.sh"
+  command  'pgrep -u zabbix 'zabbix_sender' > /dev/null || /usr/local/bin/run_zabbix_sender.sh'
 end

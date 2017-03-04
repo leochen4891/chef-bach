@@ -19,6 +19,8 @@ default[:bcpc][:hadoop][:hdfs][:dfs].tap do |dfs|
   dfs[:permissions][:superusergroup] = "hdfs"
   dfs[:cluster][:administrators] = "hdfs"
   dfs[:dfs][:ha]['automatic-failover'][:enabled] = true
+  dfs['namenode']['heartbeat']['recheck-interval'] = 300000 # in milliseconds
+  dfs['heartbeat']['interval'] = 3 # in seconds 
 end
 
 default[:bcpc][:hadoop][:hdfs][:ldap].tap do |ldap|
@@ -82,11 +84,17 @@ default[:bcpc][:hadoop][:hdfs][:site_xml].tap do |site_xml|
   site_xml['dfs.namenode.avoid.write.stale.datanode'] =
     dfs[:namenode][:avoid][:write][:stale][:datanode]
 
+  site_xml['dfs.namenode.heartbeat.recheck-interval'] =
+    dfs['namenode']['heartbeat']['recheck-interval']
+
   site_xml['dfs.hosts.exclude'] =
     dfs[:hosts][:exclude]
 
   site_xml['dfs.datanode.du.reserved'] =
     dfs[:datanode][:du][:reserved]
+
+  site_xml['dfs.heartbeat.interval'] =
+    dfs['heartbeat']['interval']
 
   site_xml['dfs.blocksize'] =
     node[:bcpc][:hadoop][:hdfs][:dfs_blocksize]
@@ -96,4 +104,5 @@ default[:bcpc][:hadoop][:hdfs][:site_xml].tap do |site_xml|
   
   site_xml['dfs.namenode.handler.count'] =
     node[:bcpc][:hadoop][:namenode][:handler][:count]
+
 end

@@ -87,7 +87,7 @@ ruby_block 'zabbix_monitor' do
       # Permission Guests usergroup to read hostgroup_id
       guests_ugroup_id = zbx.usergroups.get_id(:name => 'Guests')
       if guests_ugroup_id.nil?
-        Chef::Log.info('Could not find 'Guests' user group in zabbix')
+        Chef::Log.info('Could not find Guests user group in zabbix')
       else
         ret = zbx.usergroups.set_perms(
                 :usrgrpid => guests_ugroup_id, :hostgroupids => [hostgroup_id],
@@ -325,5 +325,5 @@ cron 'Run script to query graphite and send data to zabbix' do
   minute '*'
   hour   '*'
   user   'zabbix'
-  command  'pgrep -u zabbix 'zabbix_sender' > /dev/null || /usr/local/bin/run_zabbix_sender.sh'
+  command  "pgrep -u zabbix 'zabbix_sender' > /dev/null || /usr/local/bin/run_zabbix_sender.sh"
 end

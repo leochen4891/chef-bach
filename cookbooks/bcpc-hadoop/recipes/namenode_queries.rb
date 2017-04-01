@@ -12,34 +12,33 @@ node.set['bcpc']['hadoop']['graphite']['service_queries']['namenode'] = {
   },
 
   # Alarm when more than 30% of the datanodes are dead
-  'namenode.DeadNodesRatio' => {
+  'namenode.DeadDataNodesRatio' => {
      'query' => 'divideSeries('\
                   'minSeries(jmx.namenode.*.nn_fs_name_system_state.FSNamesystemState.NumDeadDataNodes),'\
                   'maxSeries(jmx.namenode.*.nn_fs_name_system_state.FSNamesystemState.Num*DataNodes)'\
                 ')',
-     #'value_type' => 0, # 0 = numeric float
      'trigger_val' => "max(#{node['bcpc']['hadoop']['zabbix']['trigger_chk_period']}m)",
      'trigger_cond' => '>0',
-     'trigger_name' => 'DeadNodesRatio',
+     'trigger_name' => 'DeadDataNodesRatio',
      'enable' => true,
      'trigger_dep' => [],
      'trigger_desc' => 'More than 30% datanodes are dead',
-     'severity' => 5,
-     'route_to' => 'admin'
-     #'esc_period' => '60'
+     'severity' => 3,
+     'route_to' => 'admin',
+     'esc_period' => '60'
   },
 
   # Alarm when namenodes report different non-zero number of dead datanodes after 10.5(default) min
-  'namenode.DeadNodesMismatch' => {
+  'namenode.DeadDataNodesNumbersMismatch' => {
      'query' => 'diffSeries(removeBelowValue(jmx.namenode.*.nn_fs_name_system_state.FSNamesystemState.NumDeadDataNodes,1))',
      'trigger_val' => "max(#{node['bcpc']['hadoop']['zabbix']['trigger_chk_period']}m)",
      'trigger_cond' => '>0',
-     'trigger_name' => 'DeadNodesMismatch',
+     'trigger_name' => 'DeadDataNodesNumbersMismatch',
      'enable' => true,
      'trigger_dep' => [],
      'trigger_desc' => 'Namenodes report different non-zero numbers of dead datanodes',
-     'severity' => 3,
-     'route_to' => 'admin'
-     #'esc_period' => '630'
+     'severity' => 2,
+     'route_to' => 'admin',
+     'esc_period' => '630'
   }
 }

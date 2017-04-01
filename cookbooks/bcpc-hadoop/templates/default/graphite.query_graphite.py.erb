@@ -83,9 +83,9 @@ class GraphiteToZabbix(object):
     #   use string contain as a temporary solution.
 
     if 'divideSeries' in target and 'NumDeadDataNodes' in target:
-      return ('namenode', 'namenode.DeadNodesRatio')
+      return ('namenode', 'namenode.DeadDataNodesRatio')
     elif 'diffSeries' in target and 'NumDeadDataNodes' in target:
-      return ('namenode', 'namenode.DeadNodesMismatch')
+      return ('namenode', 'namenode.DeadDataNodesNumbersMismatch')
 
     query = self.fetch_query_from_function(target)
     parts = query.split('.')

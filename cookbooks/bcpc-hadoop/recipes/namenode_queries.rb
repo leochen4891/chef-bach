@@ -25,7 +25,6 @@ node.set['bcpc']['hadoop']['graphite']['service_queries']['namenode'] = {
      'trigger_desc' => 'More than 30% datanodes are dead',
      'severity' => 3,
      'route_to' => 'admin',
-     'esc_period' => '60'
   },
 
   # Alarm when namenodes report different non-zero number of dead datanodes after 10.5(default) min

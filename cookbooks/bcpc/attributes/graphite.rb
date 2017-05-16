@@ -23,19 +23,7 @@ default['bcpc']['graphite']['carbon']['storage'] = {
 default['bcpc']['graphite']['django']['version'] = "1.5.4" 
 default['bcpc']['graphite']['carbon']['relay']['idle_timeout'] = 1800 
 default['bcpc']['graphite']['carbon']['cache']['MAX_UPDATES_PER_SECOND'] = 170 
-default['bcpc']['graphite']['carbon']['relay']['use_whitelist'] = true
-default['bcpc']['graphite']['carbon']['relay']['blacklist'] = [
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_AccessController.*',
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_appendCount',
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_compactionsCompletedCount',
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_deleteCount',
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_incrementCount',
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_memStoreSize',
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_mutateCount',
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_numBytesCompactedCount',
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_numFilesCompactedCount',
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_scanNext.*',
-  '^jmx\.hbase_rs\..*\.hb_regions\.RegionServer\..*_metric_store.*'
-]
+default['bcpc']['graphite']['carbon']['relay']['use_whitelist'] = false
+default['bcpc']['graphite']['carbon']['relay']['blacklist'] = []
 
 default[:bcpc][:graphite][:ip] = node[:bcpc][:management][:vip]

@@ -58,35 +58,21 @@ default[:bach][:repository][:mysql_connector].tap do |connector|
     node[:bach][:repository][:mysql_connector][:version] + '_all.deb'
 end
 
-# Java attributes
-#default['bach']['repository']['java'].tap do |java|
-#  java['jce_url'] = node['java']['oracle']['jce']['8']['url']
-#  java['jce_checksum'] = node['java']['oracle']['jce']['8']['checksum']
-#  java['jdk_url'] = node['java']['jdk']['8']['x86_64']['url']
-#  java['jdk_checksum'] = node['java']['jdk']['8']['x86_64']['checksum']
-#end
+# Get the URLs to download Java installation packages
+# use java cookbook (https://github.com/agileorbit-cookbooks/java)
+default['bach']['repository']['java'].tap do |java|
+  java['jce_url']      = node['java']['oracle']['jce']['8']['url']
+  java['jce_checksum'] = node['java']['oracle']['jce']['8']['checksum']
+  java['jdk_url']      = node['java']['jdk']['8']['x86_64']['url']
+  java['jdk_checksum'] = node['java']['jdk']['8']['x86_64']['checksum']
+end
 
-# set the version and flavor for java cookbook, they come from bcpc
-# (https://github.com/agileorbit-cookbooks/java)
-default['java']['jdk_version'] = node['bcpc']['java']['jdk_version']
-default['java']['install_flavor'] = node['bcpc']['java']['install_flavor']
-default['java']['accept_license_agreement'] = node['bcpc']['java']['accept_license_agreement']
-default['java']['oracle']['jce']['enabled'] = node['bcpc']['java']['oracle']['jce']['enabled']
-
-# urls comes from java cookbook
-jdk_url = node['java']['jdk']['8']['x86_64']['url']
-jce_url = node['java']['oracle']['jce']['8']['url']
-
-# redirect the urls to the bootstrap node
-jdk_tgz_name = Pathname.new(jdk_url).basename.to_s
-jce_tgz_name = Pathname.new(jce_url).basename.to_s
-default['java']['jdk']['8']['x86_64']['url'] = get_binary_server_url + jdk_tgz_name
-default['java']['oracle']['jce']['8']['url'] = get_binary_server_url + jce_tgz_name
+# Install Java on bootstrap node
+default['java']['jdk_version'] = 8
+default['java']['install_flavor'] = 'oracle'
+default['java']['accept_license_agreement'] = true
+default['java']['oracle']['accept_oracle_download_terms'] = true
+default['java']['oracle']['jce']['enabled'] = true
 
 # Set the JAVA_HOME for Hadoop components
-default['bcpc']['hadoop']['java'] =
-  "/usr/lib/jvm/java-#{node[:java][:jdk_version]}-" \
-  "#{node[:java][:install_flavor]}-amd64"
-
-default['bcpc']['cluster']['file_path'] =
-  '/home/vagrant/chef-bcpc/cluster.txt'
+default['bcpc']['hadoop']['java'] = "/usr/lib/jvm/java-8-oracle-amd64"

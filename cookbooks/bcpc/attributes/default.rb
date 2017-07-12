@@ -276,11 +276,3 @@ default['bcpc']['chefvault']['checksum'] =
 # bcpc binary server pathnames
 default['bcpc']['bin_dir']['path'] = '/home/vagrant/chef-bcpc/bins/'
 default['bcpc']['bin_dir']['gems'] = "#{node['bcpc']['bin_dir']['path']}/gems"
-
-#################################################
-# default attributes for Java
-#################################################
-default['bcpc']['java']['jdk_version'] = 8
-default['bcpc']['java']['install_flavor'] = 'oracle'
-default['bcpc']['java']['accept_license_agreement'] = true
-default['bcpc']['java']['oracle']['jce']['enabled'] = true

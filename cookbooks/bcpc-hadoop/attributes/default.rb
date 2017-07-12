@@ -186,28 +186,26 @@ default[:bcpc][:hadoop][:os][:group][:hadoop][:members] = [
 default[:bcpc][:hadoop][:os][:group][:hdfs][:members]=["hdfs"]
 default[:bcpc][:hadoop][:os][:group][:mapred][:members]=["yarn"]
 
-# Override defaults for the Java cookbook (https://github.com/agileorbit-cookbooks/java)
-#  version and flavor depends on bcpc
-default['java']['jdk_version'] = node['bcpc']['java']['jdk_version']
-default['java']['install_flavor'] = node['bcpc']['java']['install_flavor']
-default['java']['accept_license_agreement'] = node['bcpc']['java']['accept_license_agreement']
-default['java']['oracle']['jce']['enabled'] = node['bcpc']['java']['oracle']['jce']['enabled']
 
-# get the url from java cookbook
+# Override attributes to install Java 
+# use java cookbook (https://github.com/agileorbit-cookbooks/java)
+default['java']['jdk_version'] = 8
+default['java']['install_flavor'] = 'oracle'
+default['java']['accept_license_agreement'] = true
+default['java']['oracle']['jce']['enabled'] = true
+
+# redirect the installation urls to the bootstrap node
 jdk_url = node['java']['jdk']['8']['x86_64']['url']
 jce_url = node['java']['oracle']['jce']['8']['url']
 
 jdk_tgz_name = Pathname.new(jdk_url).basename.to_s
 jce_tgz_name = Pathname.new(jce_url).basename.to_s
 
-# redirect the download url to the bootstrap node
 default['java']['jdk']['8']['x86_64']['url'] = get_binary_server_url + jdk_tgz_name
 default['java']['oracle']['jce']['8']['url'] = get_binary_server_url + jce_tgz_name
 
 # Set the JAVA_HOME for Hadoop components
-default['bcpc']['hadoop']['java'] =
-  "/usr/lib/jvm/java-#{node[:java][:jdk_version]}-" \
-  "#{node[:java][:install_flavor]}-amd64"
+default['bcpc']['hadoop']['java'] = "/usr/lib/jvm/java-8-oracle-amd64"
 
 default['bcpc']['cluster']['file_path'] =
   '/home/vagrant/chef-bcpc/cluster.txt'

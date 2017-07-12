@@ -20,8 +20,19 @@ node.set['bcpc']['hadoop']['graphite']['service_queries']['hbase_master'] = {
     'trigger_name' => 'HBaseRSAvailability',
     'enable' => true,
     'trigger_dep' => ['HBaseMasterAvailability'],
-    'trigger_desc' => 'HBase region server seems to be down',
+    'trigger_desc' => 'One or more HBase region servers seems to be down',
     'severity' => 3,
+    'route_to' => 'admin'
+  },
+  'hbase_master.numRegionServersHalfDown' => {
+    'query' => 'maxSeries(jmx.hbase_master.*.hbm_server.Master.numRegionServers)',
+    'trigger_val' => "max(#{triggers_sensitivity})",
+    'trigger_cond' => "<#{(node['bcpc']['hadoop']['rs_hosts'].length / 2).floor}",
+    'trigger_name' => 'HBaseRSAvailabilityHalfDown',
+    'enable' => true,
+    'trigger_dep' => ['HBaseMasterAvailability'],
+    'trigger_desc' => 'Half of the HBase region servers seems to be down',
+    'severity' => 4,
     'route_to' => 'admin'
   }
 }

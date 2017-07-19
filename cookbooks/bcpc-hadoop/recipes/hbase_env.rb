@@ -83,11 +83,13 @@ end
 if node[:bcpc][:hadoop].attribute?(:jmx_enabled) && node[:bcpc][:hadoop][:jmx_enabled]
   node.default['bcpc']['hadoop']['hbase']['env']['HBASE_MASTER_OPTS'] =
     node['bcpc']['hadoop']['hbase']['env']['HBASE_MASTER_OPTS'] + ' $HBASE_JMX_BASE ' \
-    ' -Dcom.sun.management.jmxremote.port=' + node[:bcpc][:hadoop][:hbase_master][:jmx][:port].to_s
+    ' -Dcom.sun.management.jmxremote.port=' + node[:bcpc][:hadoop][:hbase_master][:jmx][:port].to_s +
+    " -javaagent:#{node['bcpc']['jmxtrans_agent']['lib_file']}=#{node['bcpc']['hadoop']['jmxtrans_agent']['hbase_master']['xml']}"
 
   node.default['bcpc']['hadoop']['hbase']['env']['HBASE_REGIONSERVER_OPTS'] =
     node['bcpc']['hadoop']['hbase']['env']['HBASE_REGIONSERVER_OPTS'] + ' $HBASE_JMX_BASE ' \
-    ' -Dcom.sun.management.jmxremote.port=' + node[:bcpc][:hadoop][:hbase_rs][:jmx][:port].to_s
+    ' -Dcom.sun.management.jmxremote.port=' + node[:bcpc][:hadoop][:hbase_rs][:jmx][:port].to_s +
+    " -javaagent:#{node['bcpc']['jmxtrans_agent']['lib_file']}=#{node['bcpc']['hadoop']['jmxtrans_agent']['hbase_rs']['xml']}"
 end
 
 template '/etc/hbase/conf/hbase-env.sh' do

@@ -46,6 +46,10 @@ end
 
 template "/usr/hdp/#{node[:bcpc][:hadoop][:distribution][:active_release]}/zookeeper/bin/zkServer.sh" do
   source "zk_zkServer.sh.erb"
+  variables(
+    jmxtrans_agent_lib: node['bcpc']['jmxtrans_agent']['lib_file'],
+    jmxtrans_agent_xml: node['bcpc']['hadoop']['jmxtrans_agent']['zookeeper']['xml']
+  )
 end
 
 link '/etc/init.d/zookeeper-server' do

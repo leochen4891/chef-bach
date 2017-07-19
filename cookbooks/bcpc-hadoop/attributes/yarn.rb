@@ -56,7 +56,8 @@ default['bcpc']['hadoop']['yarn']['env_sh'].tap do |env_sh|
     ' -XX:+UseConcMarkSweepGC ' \
     ' -Dcom.sun.management.jmxremote.ssl=false' \
     ' -Dcom.sun.management.jmxremote.authenticate=false' \
-    " -agentpath:#{node['bcpc-hadoop']['jvmkill']['lib_file']}"
+    " -agentpath:#{node['bcpc-hadoop']['jvmkill']['lib_file']}" \
+    " -javaagent:#{node['bcpc']['jmxtrans_agent']['lib_file']}=#{node['bcpc']['hadoop']['jmxtrans_agent']['nodemanager']['xml']}"
 
   env_sh['YARN_RESOURCEMANAGER_OPTS'] =
     ' -Dcom.sun.management.jmxremote.port=' +
@@ -70,7 +71,8 @@ default['bcpc']['hadoop']['yarn']['env_sh'].tap do |env_sh|
     ' -XX:+UseConcMarkSweepGC ' \
     ' -Dcom.sun.management.jmxremote.ssl=false' \
     ' -Dcom.sun.management.jmxremote.authenticate=false' \
-    " -agentpath:#{node['bcpc-hadoop']['jvmkill']['lib_file']}"
+    " -agentpath:#{node['bcpc-hadoop']['jvmkill']['lib_file']}" \
+    " -javaagent:#{node['bcpc']['jmxtrans_agent']['lib_file']}=#{node['bcpc']['hadoop']['jmxtrans_agent']['resourcemanager']['xml']}"
 end
 
 default['bcpc']['hadoop']['yarn']['site_xml'].tap do |site_xml|

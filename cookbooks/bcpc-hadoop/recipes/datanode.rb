@@ -294,6 +294,7 @@ locking_resource 'hadoop-hdfs-datanode-restart' do
   subscribes :serialize, 'bash[hdp-select hadoop-hdfs-datanode]', :delayed
   subscribes :serialize, 'log[jdk-version-changed]', :delayed
   subscribes :serialize, 'link[/etc/init.d/hadoop-hdfs-datanode]', :delayed
+  subscribes :serialize, node['bcpc']['hadoop']['jmxtrans_agent']['datanode']['xml'], :delayed
 end
 
 service 'hadoop-yarn-nodemanager' do

@@ -10,7 +10,7 @@
   <outputWriter class="<%= @outputWriter_class %>">
       <host><%= @outputWriter_host %></host>
       <port><%= @outputWriter_port %></port>
-      <namePrefix><%= @outputWriter_namePrefix %>.#hostname#</namePrefix>
+      <namePrefix><%= @outputWriter_namePrefix %>.#escaped_hostname#.</namePrefix>
   </outputWriter>
 
   <collectIntervalInSeconds><%= @collectIntervalInSeconds %></collectIntervalInSeconds>

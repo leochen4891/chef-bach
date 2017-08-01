@@ -75,7 +75,7 @@ default['bcpc']['hadoop']['jmxtrans_agent']['datanode']['queries'] = default['bc
 ]
 
 # HBase master
-default['bcpc']['hadoop']['jmxtrans_agent']['hbase_master']['xml'] = '/etc/hbase/conf/jmxtrans_agent_hbase_master.xml'
+default['bcpc']['hadoop']['jmxtrans_agent']['hbase_master']['xml'] = '/etc/hadoop/conf/jmxtrans_agent_hbase_master.xml'
 default['bcpc']['hadoop']['jmxtrans_agent']['hbase_master']['name_prefix'] = 'jmx.hbase_master'
 default['bcpc']['hadoop']['jmxtrans_agent']['hbase_master']['queries'] = default['bcpc']['hadoop']['jmxtrans_agent']['basic']['queries'] + [
   {

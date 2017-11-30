@@ -65,21 +65,22 @@ epoch = Time.now.strftime('%s')
   },
   {
     name: 'carbon',
-    version: '1.0.2',
-    url: 'https://github.com/graphite-project/carbon/archive/1.0.2.zip',
-    checksum: 'c93b18051403c0fd19b805fc0a185ca82623187e9e1a6ca6c4e84c9c5239e404'
+    version: '1.1.0-pre3',
+    url: 'https://github.com/graphite-project/carbon/archive/1.1.0-pre3.zip',
+    checksum: '7ac5863d6e250005b323a0a9fdeb56dbd0a25f8501daf117e4fd9f758470fd18'
+
   },
   {
     name: 'whisper',
-    version: '1.0.2',
-    url: 'https://github.com/graphite-project/whisper/archive/1.0.2.zip',
-    checksum: 'e8d27c236a064d532d6fe921be89dd63e6166cdc8e31cc8ea85b692b750d20d4'
+    version: '1.1.0-pre3',
+    url: 'https://github.com/graphite-project/whisper/archive/1.1.0-pre3.zip',
+    checksum: 'eafa808a4a6f758d4a95ed08ec0c654b65779bd691d70c1753792eb2dc70d0d9'
   },
   {
     name: 'graphite-web',
-    version: '1.0.2',
-    url: 'https://github.com/graphite-project/graphite-web/archive/1.0.2.zip',
-    checksum: 'a72ade2cb0ee261ac8dbbdd5f432b835606c9ddd13948659f7977feb4b13b244'
+    version: '1.1.0-pre3',
+    url: 'https://github.com/graphite-project/graphite-web/archive/1.1.0-pre3.zip',
+    checksum: '3c3f9987df7b9426c3dc1c8ca01ce61dae0b4c97fffbc34fc00eb1b9e3d1f651'
   }
 ].each do |package|
 

@@ -271,8 +271,8 @@ WHISPER_FALLOCATE_CREATE = True
 # By default, carbon itself will log statistics (such as a count,
 # metricsReceived) with the top level prefix of 'carbon' at an interval of 60
 # seconds. Set CARBON_METRIC_INTERVAL to 0 to disable instrumentation
-# CARBON_METRIC_PREFIX = carbon
-# CARBON_METRIC_INTERVAL = 60
+CARBON_METRIC_PREFIX = carbon
+CARBON_METRIC_INTERVAL = 60
 
 # Enable AMQP if you want to receve metrics using an amqp broker
 # ENABLE_AMQP = False
@@ -396,7 +396,7 @@ DESTINATIONS = <%= "#{@servers.map{|x| x['mgmt_ip']+':2024'}.sort.join(', ')}" %
 # for a single destination. Once this limit is hit, we will
 # stop accepting new data if USE_FLOW_CONTROL is True, otherwise
 # we will drop any subsequently received datapoints.
-MAX_QUEUE_SIZE = 10000
+MAX_QUEUE_SIZE = 100000
 
 # This defines the maximum "message size" between carbon daemons.  If
 # your queue is large, setting this to a lower number will cause the
@@ -447,8 +447,8 @@ METRIC_CLIENT_IDLE_TIMEOUT = <%="#{node[:bcpc][:graphite][:carbon][:relay][:idle
 # By default, carbon itself will log statistics (such as a count,
 # metricsReceived) with the top level prefix of 'carbon' at an interval of 60
 # seconds. Set CARBON_METRIC_INTERVAL to 0 to disable instrumentation
-# CARBON_METRIC_PREFIX = carbon
-# CARBON_METRIC_INTERVAL = 60
+CARBON_METRIC_PREFIX = carbon
+CARBON_METRIC_INTERVAL = 60
 #
 # In order to turn off logging of successful connections for the line
 # receiver, set this to False
@@ -530,7 +530,7 @@ REPLICATION_FACTOR = 1
 # for a single destination. Once this limit is hit, we will
 # stop accepting new data if USE_FLOW_CONTROL is True, otherwise
 # we will drop any subsequently received datapoints.
-MAX_QUEUE_SIZE = 10000
+MAX_QUEUE_SIZE = 100000
 
 # Set this to False to drop datapoints when any send queue (sending datapoints
 # to a downstream carbon daemon) hits MAX_QUEUE_SIZE. If this is True (the
@@ -573,8 +573,8 @@ MAX_AGGREGATION_INTERVALS = 5
 # By default, carbon itself will log statistics (such as a count,
 # metricsReceived) with the top level prefix of 'carbon' at an interval of 60
 # seconds. Set CARBON_METRIC_INTERVAL to 0 to disable instrumentation
-# CARBON_METRIC_PREFIX = carbon
-# CARBON_METRIC_INTERVAL = 60
+CARBON_METRIC_PREFIX = carbon
+CARBON_METRIC_INTERVAL = 60
 
 # In order to turn off logging of successful connections for the line
 # receiver, set this to False

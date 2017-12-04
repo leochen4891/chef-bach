@@ -43,6 +43,7 @@ graphite_password = get_config!('password', 'mysql-graphite', 'os')
   python-ldap
   python-twisted
   python-memcache
+  python-cachetools
   python-pyparsing
   python-scandir
   libcairo2-dev

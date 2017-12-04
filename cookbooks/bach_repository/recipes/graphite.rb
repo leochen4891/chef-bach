@@ -81,6 +81,12 @@ epoch = Time.now.strftime('%s')
     version: '1.1.0-pre3',
     url: 'https://github.com/graphite-project/graphite-web/archive/1.1.0-pre3.zip',
     checksum: '3c3f9987df7b9426c3dc1c8ca01ce61dae0b4c97fffbc34fc00eb1b9e3d1f651'
+  },
+  {
+    name: 'cachetools',
+    version: '2.0.1',
+    url: 'https://github.com/tkem/cachetools/archive/v2.0.1.zip',
+    checksum: 'f976f5a1b28be2a29aba83f969d2b31e08e18cef2c1adb83f6a58de4783dbd39'
   }
 ].each do |package|
 

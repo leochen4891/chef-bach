@@ -10,6 +10,8 @@ global
   group  haproxy
   pidfile  /var/run/haproxy.pid
   log /dev/log local0 info
+  # hadoop conf page is more than the default size 16384 bytes
+  tune.chksize <%= @haproxy_tune_chksize %>
 
 defaults
   log  global
@@ -53,7 +55,7 @@ listen mysql-galera <%="#{node[:bcpc][:management][:vip]}"%>:3306
   mode tcp
   balance leastconn
   option  tcplog
-option tcpka
+  option tcpka
   option httpchk
 <% @mysql_servers.each do |server| -%>
   <%= "server #{server['hostname']} #{server['bcpc']['management']['ip']}:3306 check port 3307 inter 1s rise 1 fall 1 observe layer4 backup" %>
@@ -74,3 +76,21 @@ backend backend_oozie
   <%= "server #{float_host(server[:fqdn])} #{server['bcpc']['floating']['ip']}:11000 check" %>
 <% end -%>
 <% end -%>
+
+# hdfs conf page
+listen hdfs-conf-page <%= @cluster_vip %>:<%= @ha_hdfs_conf_page_port %>
+  balance roundrobin
+  option httpchk GET /jmx
+  http-check expect string tag.HAState"\ :\ "active
+  <% @hdfs_servers.each do |server| -%>
+  <%= "server #{server['hostname']} #{server['bcpc']['floating']['ip']}:50070 check" %>
+  <% end -%>
+
+# hbase conf page
+listen hbase-conf-page <%= @cluster_vip %>:<%= @ha_hbase_conf_page_port %>
+  balance roundrobin
+  option httpchk GET /jmx
+  http-check expect string tag.isActiveMaster"\ :\ "true
+  <% @hbase_servers.each do |server| -%>
+  <%= "server #{server['hostname']} #{server['bcpc']['management']['ip']}:16010 check" %>
+  <% end -%>

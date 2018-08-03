@@ -82,8 +82,9 @@ listen hdfs-conf-page <%= @cluster_vip %>:<%= @ha_hdfs_conf_page_port %>
   balance roundrobin
   option httpchk GET /jmx
   http-check expect string tag.HAState"\ :\ "active
+  source <%= node[:bcpc][:floating][:ip] %>
   <% @hdfs_servers.each do |server| -%>
-  <%= "server #{server['hostname']} #{server['bcpc']['floating']['ip']}:50070 check" %>
+  <%= "server #{server['hostname']} #{server['bcpc']['floating']['ip']}:#{@ha_hdfs_conf_page_port} check" %>
   <% end -%>
 
 # hbase conf page
@@ -91,6 +92,7 @@ listen hbase-conf-page <%= @cluster_vip %>:<%= @ha_hbase_conf_page_port %>
   balance roundrobin
   option httpchk GET /jmx
   http-check expect string tag.isActiveMaster"\ :\ "true
+  source <%= node[:bcpc][:floating][:ip] %>
   <% @hbase_servers.each do |server| -%>
-  <%= "server #{server['hostname']} #{server['bcpc']['management']['ip']}:16010 check" %>
+  <%= "server #{server['hostname']} #{server['bcpc']['floating']['ip']}:#{@ha_hbase_conf_page_port} check" %>
   <% end -%>

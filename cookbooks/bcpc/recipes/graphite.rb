@@ -189,7 +189,7 @@ template '/opt/graphite/conf/blacklist.conf' do
   notifies :restart, 'service[carbon-cache]', :delayed
   notifies :restart, 'service[carbon-aggregator]', :delayed
   notifies :restart, 'service[carbon-relay]', :delayed
-  only_if { node['bcpc']['graphite']['use_whitelist']
+  only_if { node['bcpc']['graphite']['use_whitelist'] }
 end
 
 #

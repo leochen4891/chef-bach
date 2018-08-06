@@ -6,5 +6,5 @@
 <% (@graphite_blacklist || {}).each do |kv_pair| %>
 # <%= kv_pair['description'] %>
 <%= kv_pair['regex']  %>
-<%= %>
+
 <% end %>
